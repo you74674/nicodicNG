@@ -3,7 +3,7 @@
 // @namespace   yakisoft
 // @include     http://dic.nicovideo.jp/a/*
 // @include     http://dic.nicovideo.jp/b/a/*
-// @version     1
+// @version     1.1
 // @grant       none
 // @description ニコニコ大百科掲示板NG機能。IDを入力して設定を押せばNGできます。
 // ==/UserScript==
@@ -17,11 +17,12 @@
       var reshead=bbs.children[i];
       var resbody=bbs.children[i+1];
       for(var j=0; j<ngList.length; j++){
-        if(reshead.textContent.search(ngList[j])!=-1){
-          reshead.childNodes[3].textContent="NGしました"
-          reshead.childNodes[4].textContent="：NGしました ID: "+ngList[j]
-          resbody.textContent="NGしました"
-        }
+        if(ngList[j].length!=0)
+          if(reshead.textContent.search(ngList[j])!=-1){
+            reshead.childNodes[3].textContent="NGしました"
+            reshead.childNodes[4].textContent="：NGしました ID: "+ngList[j]
+            resbody.textContent="NGしました"
+          }
       }
     }
   }
