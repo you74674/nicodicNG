@@ -12,7 +12,7 @@
 
 (function(){
 	document.body.addEventListener('AutoPagerize_DOMNodeInserted',function(evt){
-		doNG(NGList.value.split('\n').filter(function(el) {return el.length != 0}))
+		doNG(NGList)
 	}, false);
 	function doNGImpl(dl, ngList){
 		var resheads=dl.getElementsByTagName("dt")
@@ -23,13 +23,14 @@
 			for(var j=0; j<ngList.length; j++){
 				if(reshead.textContent.indexOf(ngList[j])!=-1){
 					reshead.childNodes[3].textContent="NGしました"
-					reshead.childNodes[4].textContent="：NGしました ID: "+ngList[j]
+					reshead.childNodes[4].textContent=" ：NGしました ID: "+ngList[j]
 					resbody.textContent="NGしました"
 				}
 			}
-		}		
+		}
 	}
-	function doNG(ngList){
+	function doNG(NGList){
+		var ngList=NGList.value.split('\n').filter(function(el) {return el.length != 0})
 		var bbs = document.getElementById("bbs").getElementsByTagName("dl")
 		for(var dl=0; dl<bbs.length; dl++)
 			doNGImpl(bbs[dl], ngList)
@@ -56,5 +57,5 @@
 	div.appendChild(NGList); //appendChild
 	div.appendChild(NGButton);
 
-	doNG(NGList.value.split('\n').filter(function(el) {return el.length != 0}));
+	doNG(NGList);
 })();
