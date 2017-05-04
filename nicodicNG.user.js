@@ -11,25 +11,30 @@
 // ==/UserScript==
 
 (function(){
-	function doNG(NGList){
-		var ngList = NGList.value.split('\n')
-		var bbs = document.getElementById("bbs").getElementsByTagName("dl")[0]
-		var resheads=bbs.getElementsByTagName("dt")
-		var resbodies=bbs.getElementsByTagName("dd")
+	document.body.addEventListener('AutoPagerize_DOMNodeInserted',function(evt){
+		doNG(NGList.value.split('\n').filter(function(el) {return el.length != 0}))
+	}, false);
+	function doNGImpl(dl, ngList){
+		var resheads=dl.getElementsByTagName("dt")
+		var resbodies=dl.getElementsByTagName("dd")
 		for(var i=0; i<resheads.length; i++){
 			var reshead=resheads[i]
 			var resbody=resbodies[i]
 			for(var j=0; j<ngList.length; j++){
-				if(ngList[j].length!=0)
-					if(reshead.textContent.indexOf(ngList[j])!=-1){
-						reshead.childNodes[3].textContent="NGしました"
-						reshead.childNodes[4].textContent="：NGしました ID: "+ngList[j]
-						resbody.textContent="NGしました"
-					}
+				if(reshead.textContent.indexOf(ngList[j])!=-1){
+					reshead.childNodes[3].textContent="NGしました"
+					reshead.childNodes[4].textContent="：NGしました ID: "+ngList[j]
+					resbody.textContent="NGしました"
+				}
 			}
-		}
+		}		
 	}
-	var div = document.getElementById("contents");
+	function doNG(ngList){
+		var bbs = document.getElementById("bbs").getElementsByTagName("dl")
+		for(var dl=0; dl<bbs.length; dl++)
+			doNGImpl(bbs[dl], ngList)
+	}
+	var div = document.getElementById("right-column");
 	var NGList = document.createElement("textarea");
 	var NGButton = document.createElement("button");
 	NGList.name = "NGList";
@@ -51,5 +56,5 @@
 	div.appendChild(NGList); //appendChild
 	div.appendChild(NGButton);
 
-	doNG(NGList);
+	doNG(NGList.value.split('\n').filter(function(el) {return el.length != 0}));
 })();
