@@ -5,7 +5,7 @@
 // @include		https://dic.nicovideo.jp/a/*
 // @include		http://dic.nicovideo.jp/b/a/*
 // @include		https://dic.nicovideo.jp/b/a/*
-// @version		1.2
+// @version		1.2.1
 // @grant		none
 // @description	ニコニコ大百科掲示板NG機能。IDを入力して設定を押せばNGできます。
 // ==/UserScript==
@@ -22,7 +22,7 @@
 					if(reshead.textContent.indexOf(ngList[j])!=-1){
 						reshead.childNodes[3].textContent="NGしました"
 						reshead.childNodes[4].textContent="：NGしました ID: "+ngList[j]
-						resbody.textContent="NGしました""
+						resbody.textContent="NGしました"
 					}
 			}
 		}
