@@ -5,7 +5,7 @@
 // @include		https://dic.nicovideo.jp/a/*
 // @include		http://dic.nicovideo.jp/b/a/*
 // @include		https://dic.nicovideo.jp/b/a/*
-// @version		1.3
+// @version		1.4
 // @grant		none
 // @description	ニコニコ大百科掲示板NG機能。IDを入力して設定を押せばNGできます。
 // ==/UserScript==
