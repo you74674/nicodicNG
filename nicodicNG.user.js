@@ -1,54 +1,53 @@
-// ==UserScript==
-// @name        ƒjƒRƒjƒR‘å•S‰ÈŒf¦”ÂNG‹@”\
-// @namespace   yakisoft
-// @include     http://dic.nicovideo.jp/a/*
-// @include     http://dic.nicovideo.jp/b/a/*
-// @version     1.1
-// @grant       none
-// @description ƒjƒRƒjƒR‘å•S‰ÈŒf¦”ÂNG‹@”\BID‚ğ“ü—Í‚µ‚Äİ’è‚ğ‰Ÿ‚¹‚ÎNG‚Å‚«‚Ü‚·B
+ï»¿// ==UserScript==
+// @name		ãƒ‹ã‚³ãƒ‹ã‚³å¤§ç™¾ç§‘æ²ç¤ºæ¿NGæ©Ÿèƒ½
+// @namespace	yakisoft
+// @include		http://dic.nicovideo.jp/a/*
+// @include		https://dic.nicovideo.jp/a/*
+// @include		http://dic.nicovideo.jp/b/a/*
+// @include		https://dic.nicovideo.jp/b/a/*
+// @version		1.2
+// @grant		none
+// @description	ãƒ‹ã‚³ãƒ‹ã‚³å¤§ç™¾ç§‘æ²ç¤ºæ¿NGæ©Ÿèƒ½ã€‚IDã‚’å…¥åŠ›ã—ã¦è¨­å®šã‚’æŠ¼ã›ã°NGã§ãã¾ã™ã€‚
 // ==/UserScript==
 
 (function(){
+	function doNG(NGList){
+		var ngList = NGList.value.split('\n')
+		var bbs = document.getElementById("bbs").getElementsByTagName("dl")[0]
+		for(var i=0; i<bbs.childElementCount; i+=2){
+			var reshead=bbs.children[i];
+			var resbody=bbs.children[i+1];
+			for(var j=0; j<ngList.length; j++){
+				if(ngList[j].length!=0)
+					if(reshead.textContent.indexOf(ngList[j])!=-1){
+						reshead.childNodes[3].textContent="NGã—ã¾ã—ãŸ"
+						reshead.childNodes[4].textContent="ï¼šNGã—ã¾ã—ãŸ ID: "+ngList[j]
+						resbody.textContent="NGã—ã¾ã—ãŸ""
+					}
+			}
+		}
+	}
+	var div = document.getElementById("contents");
+	var NGList = document.createElement("textarea");
+	var NGButton = document.createElement("button");
+	NGList.name = "NGList";
+	NGList.maxLength = "5000";
+	NGList.cols = "40";
+	NGList.rows = "10";
+	if(typeof(Storage) !== "undefined"){
+		if(localStorage.nicodicNG){
+			NGList.value = localStorage.getItem('nicodicNG')
+		}
+	}
+	NGButton.name = "NGButton";
+	NGButton.textContent = "è¨­å®š"
+	NGButton.style = "width:50px; height:25px"
+	NGButton.onclick=function(){
+		localStorage.setItem('nicodicNG', NGList.value)
+		doNG(NGList)
+	}
+	div.appendChild(NGList); //appendChild
+	div.appendChild(NGButton);
 
-  function doNG(NGList){
-    var ngList = NGList.value.split('\n')
-    var bbs = document.getElementById("bbs").getElementsByTagName("dl")[0]
-    for(var i=0; i<bbs.childElementCount; i+=2){
-      var reshead=bbs.children[i];
-      var resbody=bbs.children[i+1];
-      for(var j=0; j<ngList.length; j++){
-        if(ngList[j].length!=0)
-          if(reshead.textContent.search(ngList[j])!=-1){
-            reshead.childNodes[3].textContent="NG‚µ‚Ü‚µ‚½"
-            reshead.childNodes[4].textContent="FNG‚µ‚Ü‚µ‚½ ID: "+ngList[j]
-            resbody.textContent="NG‚µ‚Ü‚µ‚½"
-          }
-      }
-    }
-  }
-  var div = document.getElementById("contents");
-  var NGList = document.createElement("textarea");
-  var NGButton = document.createElement("button");
-  NGList.class = "NGList"
-  NGList.name = "NGList";
-  NGList.maxLength = "5000";
-  NGList.cols = "40";
-  NGList.rows = "10";
-  if(typeof(Storage) !== "undefined"){
-    if(localStorage.nicodicNG){
-      NGList.value = localStorage.getItem('nicodicNG')
-    }
-  }
-  NGButton.name = "NGButton";
-  NGButton.textContent = "İ’è"
-  NGButton.style = "width:50px; height:25px"
-  NGButton.onclick=function(){
-    localStorage.setItem('nicodicNG', NGList.value)
-    doNG(NGList)
-  }
-  div.appendChild(NGList); //appendChild
-  div.appendChild(NGButton);
-
-  
-  doNG(NGList);
+	doNG(NGList);
 })();
