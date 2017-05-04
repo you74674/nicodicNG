@@ -5,7 +5,7 @@
 // @include		https://dic.nicovideo.jp/a/*
 // @include		http://dic.nicovideo.jp/b/a/*
 // @include		https://dic.nicovideo.jp/b/a/*
-// @version		1.2.1
+// @version		1.3
 // @grant		none
 // @description	ニコニコ大百科掲示板NG機能。IDを入力して設定を押せばNGできます。
 // ==/UserScript==
@@ -14,9 +14,11 @@
 	function doNG(NGList){
 		var ngList = NGList.value.split('\n')
 		var bbs = document.getElementById("bbs").getElementsByTagName("dl")[0]
-		for(var i=0; i<bbs.childElementCount; i+=2){
-			var reshead=bbs.children[i];
-			var resbody=bbs.children[i+1];
+		var resheads=bbs.getElementsByTagName("dt")
+		var resbodies=bbs.getElementsByTagName("dd")
+		for(var i=0; i<resheads.length; i++){
+			var reshead=resheads[i]
+			var resbody=resbodies[i]
 			for(var j=0; j<ngList.length; j++){
 				if(ngList[j].length!=0)
 					if(reshead.textContent.indexOf(ngList[j])!=-1){
