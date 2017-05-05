@@ -7,6 +7,8 @@
 // @include		https://dic.nicovideo.jp/b/a/*
 // @include		http://dic.nicomoba.jp/k/b/a/*
 // @include		https://dic.nicomoba.jp/k/b/a/*
+// @include		http://dic.nicovideo.jp/t/b/a/*
+// @include		https://dic.nicovideo.jp/t/b/a/*
 // @version		1.5
 // @grant		none
 // @description	ニコニコ大百科掲示板NG機能。IDを入力して設定を押せばNGできます。
