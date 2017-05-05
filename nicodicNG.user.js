@@ -5,7 +5,9 @@
 // @include		https://dic.nicovideo.jp/a/*
 // @include		http://dic.nicovideo.jp/b/a/*
 // @include		https://dic.nicovideo.jp/b/a/*
-// @version		1.4
+// @include		http://dic.nicomoba.jp/k/b/a/*
+// @include		https://dic.nicomoba.jp/k/b/a/*
+// @version		1.5
 // @grant		none
 // @description	ニコニコ大百科掲示板NG機能。IDを入力して設定を押せばNGできます。
 // ==/UserScript==
@@ -31,11 +33,13 @@
 	}
 	function doNG(NGList){
 		var ngList=NGList.value.split('\n').filter(function(el) {return el.length != 0})
-		var bbs = document.getElementById("bbs").getElementsByTagName("dl")
+		var bbs = document.getElementsByTagName("dl")
 		for(var dl=0; dl<bbs.length; dl++)
 			doNGImpl(bbs[dl], ngList)
 	}
 	var div = document.getElementById("right-column");
+	if(div==null)//mobile version
+		div=document.querySelectorAll("[id='bottom']")[1] 
 	var NGList = document.createElement("textarea");
 	var NGButton = document.createElement("button");
 	NGList.name = "NGList";
