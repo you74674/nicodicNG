@@ -9,7 +9,7 @@
 // @include		https://dic.nicomoba.jp/k/b/a/*
 // @include		http://dic.nicovideo.jp/t/b/a/*
 // @include		https://dic.nicovideo.jp/t/b/a/*
-// @version		1.6
+// @version		1.6.2
 // @grant		none
 // @description	ニコニコ大百科掲示板NG機能。IDを入力して設定を押せばNGできます。
 // ==/UserScript==
@@ -82,8 +82,8 @@ function getNGdiv(){
 		}
 	}
 	NGButton.name = "NGButton";
-	NGButton.textContent = "設定";
-	NGButton.style = "width:50px; height:25px";
+	NGButton.textContent = "NG設定";
+	NGButton.style = "width:75px; height:25px";
 	NGButton.onclick=function(){
 		localStorage.setItem('nicodicNG', NGList.value);
 		doNG(NGList);
