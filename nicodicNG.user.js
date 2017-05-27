@@ -9,7 +9,7 @@
 // @include		https://dic.nicomoba.jp/k/b/a/*
 // @include		http://dic.nicovideo.jp/t/b/a/*
 // @include		https://dic.nicovideo.jp/t/b/a/*
-// @version		1.7
+// @version		1.7.1
 // @grant		none
 // @description	ニコニコ大百科掲示板NG機能。IDを入力して設定を押せばNGできます。
 // ==/UserScript==
@@ -46,7 +46,7 @@ if(url.indexOf("dic.nicovideo.jp/t/b/a")===-1){//PC or nicomoba
 	};
 	
 	addNGButton=function addNGButton(NGList){
-		$('dt').append("<NG style=\"cursor: pointer; color:blue;\">NG</NG>");
+		$('div[id=bbs] > dl > dt').append("<NG style=\"cursor: pointer; color:blue;\">NG</NG>");
 		$('NG').click(function(e){
 			var NG=e.target;
 			var start=NG.previousSibling.textContent.indexOf("ID:")+4;
