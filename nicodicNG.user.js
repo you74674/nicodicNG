@@ -9,7 +9,7 @@
 // @include		https://dic.nicomoba.jp/k/b/a/*
 // @include		http://dic.nicovideo.jp/t/b/a/*
 // @include		https://dic.nicovideo.jp/t/b/a/*
-// @version		1.7.1
+// @version		1.7.2
 // @grant		none
 // @description	ニコニコ大百科掲示板NG機能。IDを入力して設定を押せばNGできます。
 // ==/UserScript==
@@ -28,7 +28,7 @@ if(url.indexOf("dic.nicovideo.jp/t/b/a")===-1){//PC or nicomoba
 			for(var j=0; j<ngList.length; j++){
 				if(reshead.textContent.indexOf(ngList[j])!=-1){
 					reshead.childNodes[3].textContent="NGしました";
-					reshead.childNodes[4].textContent=" ：NGしました ID: "+ngList[j]+" ";
+					reshead.childNodes[4].textContent=" ：NGしました ID: "+" ";
 					resbody.textContent="NGしました";
 				}
 			}
@@ -46,14 +46,24 @@ if(url.indexOf("dic.nicovideo.jp/t/b/a")===-1){//PC or nicomoba
 	};
 	
 	addNGButton=function addNGButton(NGList){
-		$('div[id=bbs] > dl > dt').append("<NG style=\"cursor: pointer; color:blue;\">NG</NG>");
-		$('NG').click(function(e){
-			var NG=e.target;
-			var start=NG.previousSibling.textContent.indexOf("ID:")+4;
-			var ID=NG.previousSibling.textContent.substr(start, 10);
+		var dts=$('div[id=bbs] > dl > dt').toArray();
+		var regex=/ID: (.*)/;
+		dts.forEach(function(e){
+			e.innerHTML=e.innerHTML.replace(regex, "ID: <id title='NGする' style='cursor: pointer;'>$1</id>");
+			$(e).find('id').hover(
+				function(){
+					$(this).css("color","red").css("text-decoration", "underline");
+				}, 
+				function(){
+					$(this).css("color","black").css("text-decoration", "none");
+				}
+			);
+		});
+		$('div[id=bbs] > dl > dt > id').click(function(e){
+			var ID=e.target.textContent;
 			if(NGList.value.indexOf(ID)==-1)
 			{
-				NGList.value+="\n"+ID;
+				NGList.addNGID(ID);
 				doNG(NGList);
 			}
 		});
@@ -100,6 +110,11 @@ function getNGdiv(){
 			NGList.value = localStorage.getItem('nicodicNG');
 		}
 	}
+	NGList.addNGID=function(id){
+		NGList.value+="\n"+id;
+		localStorage.setItem('nicodicNG', NGList.value);
+	};
+	
 	NGButton.name = "NGButton";
 	NGButton.textContent = "NG設定";
 	NGButton.style = "width:75px; height:25px";
