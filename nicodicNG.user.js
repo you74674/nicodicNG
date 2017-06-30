@@ -9,8 +9,9 @@
 // @include		https://dic.nicomoba.jp/k/b/a/*
 // @include		http://dic.nicovideo.jp/t/b/a/*
 // @include		https://dic.nicovideo.jp/t/b/a/*
-// @version		1.7.2
+// @version		1.7.3
 // @grant		none
+// @run-at document-start
 // @description	ニコニコ大百科掲示板NG機能。IDを入力して設定を押せばNGできます。
 // ==/UserScript==
 
@@ -130,7 +131,7 @@ function getNGdiv(){
 	return div;
 }
 
-(function(){
+var main=function(){
 	//autopagerize support
 	document.body.addEventListener('AutoPagerize_DOMNodeInserted',function(evt){
 		doNG(NGdiv.NGList);
@@ -153,4 +154,14 @@ function getNGdiv(){
 	}
 
 	doNG(NGdiv.NGList);
-})();
+};
+
+document.getElementsByTagName("html")[0].style.visibility="hidden";
+var greasemonkeyInterval = setInterval(greasemonkey, 100);
+function greasemonkey(){
+	if(document.readyState==="interactive"){
+		clearInterval(greasemonkeyInterval);
+		main();
+		document.getElementsByTagName("html")[0].style.visibility="";
+	}
+};
