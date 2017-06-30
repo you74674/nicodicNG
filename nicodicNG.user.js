@@ -155,8 +155,8 @@ var main=function(){
 
 	doNG(NGdiv.NGList);
 };
-
-document.getElementsByTagName("html")[0].style.visibility="hidden";
+if(url.indexOf("dic.nicovideo.jp/a")!=-1)//notes page
+	document.getElementsByTagName("html")[0].style.visibility="hidden";
 var greasemonkeyInterval = setInterval(greasemonkey, 100);
 function greasemonkey(){
 	if(document.readyState==="interactive"){
