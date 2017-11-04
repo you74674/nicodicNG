@@ -9,7 +9,7 @@
 // @include		https://dic.nicomoba.jp/k/b/a/*
 // @include		http://dic.nicovideo.jp/t/b/a/*
 // @include		https://dic.nicovideo.jp/t/b/a/*
-// @version		1.7.5
+// @version		1.8
 // @grant		none
 // @run-at document-start
 // @description	ニコニコ大百科掲示板NG機能。IDを入力して設定を押せばNGできます。
@@ -47,27 +47,31 @@ if(url.indexOf("dic.nicovideo.jp/t/b/a")===-1){//PC or nicomoba
 	};
 	
 	addNGButton=function addNGButton(NGList){
-		var dts=$('div[id=bbs] > dl > dt').toArray();
+		var dts=document.querySelectorAll('div[id=bbs] > dl > dt');
 		var regex=/ID: (.*)/;
 		dts.forEach(function(e){
 			e.innerHTML=e.innerHTML.replace(regex, "ID: <id title='NGする' style='cursor: pointer;'>$1</id>");
-			$(e).find('id').hover(
-				function(){
-					$(this).css("color","red").css("text-decoration", "underline");
-				}, 
-				function(){
-					$(this).css("color","black").css("text-decoration", "none");
-				}
-			);
+			var id=e.querySelectorAll('id')[0];
+			id.addEventListener( 'mouseover', function() {
+				id.style.color="red";
+				id.style.textDecoration = "underline";
+			});
+		id.addEventListener( 'mouseout', function() {
+			id.style.color="black";
+			id.style.textDecoration = "none";
+			});
 		});
-		$('div[id=bbs] > dl > dt > id').click(function(e){
-			var ID=e.target.textContent;
+		var ids=document.querySelectorAll('div[id=bbs] > dl > dt > id');
+		ids.forEach(function(e){
+			e.onclick=function(){
+				var ID=e.textContent;
 			if(NGList.value.indexOf(ID)==-1)
 			{
 				NGList.addNGID(ID);
 				doNG(NGList);
 			}
-		});
+		}
+    });
 	};
 }
 else{//mobile
@@ -164,4 +168,4 @@ function greasemonkey(){
 		main();
 		document.getElementsByTagName("html")[0].style.visibility="";
 	}
-};
+}
