@@ -9,7 +9,7 @@
 // @include		https://dic.nicomoba.jp/k/b/a/*
 // @include		http://dic.nicovideo.jp/t/b/a/*
 // @include		https://dic.nicovideo.jp/t/b/a/*
-// @version		1.8.1
+// @version		1.8.3
 // @grant		none
 // @run-at document-start
 // @description	ニコニコ大百科掲示板NG機能。IDを入力して設定を押せばNGできます。
@@ -38,6 +38,12 @@ if(url.indexOf("dic.nicovideo.jp/t/b/a")===-1){//PC or nicomoba
 	var getBBS=function(){
 		return document.getElementsByTagName("dl");
 	};
+    var getSelectorString=function(){
+        if(url.indexOf('nicomoba')!=-1)//nicomoba
+            return 'dl > dt';
+        else
+            return 'div[id=bbs] > dl > dt';
+    }
 	doNG=function doNG(NGList){
 		console.log("doNG PC or nicomoba");
 		var ngList=NGList.value.split('\n').filter(function(el) {return el.length !== 0;});
@@ -47,7 +53,7 @@ if(url.indexOf("dic.nicovideo.jp/t/b/a")===-1){//PC or nicomoba
 	};
 
 	addNGButton=function addNGButton(NGList){
-		var dts=document.querySelectorAll('dl > dt');
+		var dts=document.querySelectorAll(getSelectorString());
 		var regex=/ID: (.*)/;
 		dts.forEach(function(e){
 			e.innerHTML=e.innerHTML.replace(regex, "ID: <id title='NGする' style='cursor: pointer;'>$1</id>");
@@ -61,7 +67,7 @@ if(url.indexOf("dic.nicovideo.jp/t/b/a")===-1){//PC or nicomoba
 			id.style.textDecoration = "none";
 			});
 		});
-		var ids=document.querySelectorAll('dl > dt > id');
+		var ids=document.querySelectorAll(getSelectorString()+ ' > id');
 		ids.forEach(function(e){
 			e.onclick=function(){
 				var ID=e.textContent;
