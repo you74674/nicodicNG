@@ -9,7 +9,7 @@
 // @include		https://dic.nicomoba.jp/k/b/a/*
 // @include		http://dic.nicovideo.jp/t/b/a/*
 // @include		https://dic.nicovideo.jp/t/b/a/*
-// @version		1.8.5
+// @version		1.8.6
 // @grant		none
 // @run-at document-start
 // @description	ニコニコ大百科掲示板NG機能。IDを入力して設定を押せばNGできます。
@@ -154,7 +154,7 @@ var main=function(){
 		div.parentNode.insertBefore(NGdiv, div.nextSibling);
         NGdiv.NGList.rows = "5";
 		NGdiv.NGList.cols = "20";
-		document.getElementsByClassName("st-Footer")[0].style.height="195.9375px";
+		document.getElementsByClassName("st-Footer")[0].style.height="295.9375px";
 	}
 	else if(url.indexOf("nicomoba")===-1){//PC
 		div = document.getElementById("main");
