@@ -154,6 +154,7 @@ var main=function(){
 		div.parentNode.insertBefore(NGdiv, div.nextSibling);
         NGdiv.NGList.rows = "5";
 		NGdiv.NGList.cols = "20";
+		document.getElementsByClassName("st-Footer")[0].style.height="195.9375px";
 	}
 	else if(url.indexOf("nicomoba")===-1){//PC
 		div = document.getElementById("main");
