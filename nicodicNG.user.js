@@ -153,6 +153,7 @@ var main=function(){
 		div = document.getElementsByClassName("st-Footer_Inner")[0];
 		div.parentNode.insertBefore(NGdiv, div.nextSibling);
         NGdiv.NGList.rows = "5";
+		NGdiv.NGList.cols = "20";
 	}
 	else if(url.indexOf("nicomoba")===-1){//PC
 		div = document.getElementById("main");
@@ -167,11 +168,11 @@ var main=function(){
 
 	doNG(NGdiv.NGList);
 };
-if(url.indexOf("dic.nicovideo.jp/a")==-1)//notes page
+if(url.indexOf("dic.nicovideo.jp/a")===-1)//notes page
 	document.getElementsByTagName("html")[0].style.visibility="hidden";
 var greasemonkeyInterval = setInterval(greasemonkey, 100);
 function greasemonkey(){
-	if(document.readyState==="interactive"){
+	if(document.readyState!=="loading"){
 		clearInterval(greasemonkeyInterval);
 		try{
 			main();
