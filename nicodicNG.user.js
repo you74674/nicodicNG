@@ -18,19 +18,19 @@
 var url = window.location.href;
 
 function hide(e, c, r){
-    var key = c+"_cache";
-    if(r!==undefined){
-        if(e[c]!=r){
-            e[key]=e[c];
-            e[c]=r;
-        }
-    }
-    else{
-        if(e[key]!==undefined){
-            e[c]=e[key];
-            e[key]=undefined;
-        }
-    }
+	var key = c+"_cache";
+	if(r!==undefined){
+		if(e[c]!=r){
+			e[key]=e[c];
+			e[c]=r;
+		}
+	}
+	else{
+		if(e[key]!==undefined){
+			e[c]=e[key];
+			e[key]=undefined;
+		}
+	}
 }
 
 var doNG;
@@ -42,29 +42,29 @@ if(url.indexOf("dic.nicovideo.jp/t/b/a")===-1){//PC or nicomoba
 		for(var i=0; i<resheads.length; i++){
 			var name=resheads[i].childNodes[3];
 			var date_id=resheads[i].childNodes[4];
-            var id=resheads[i].childNodes[5];
+			var id=resheads[i].childNodes[5];
 			var text=resbodies[i];
-            if(ngList.indexOf(id.textContent)!=-1){
-                hide(name, "textContent", "NGしました");
-                hide(date_id, "textContent", " ：NGしました ID:  ");
-                hide(text, "innerHTML", "NGしました");
-            }
-            else{
-                hide(name, "textContent");
-                hide(date_id, "textContent");
-                hide(text, "innerHTML");
-            }
+			if(ngList.indexOf(id.textContent)!=-1){
+				hide(name, "textContent", "NGしました");
+				hide(date_id, "textContent", " ：NGしました ID:  ");
+				hide(text, "innerHTML", "NGしました");
+			}
+			else{
+				hide(name, "textContent");
+				hide(date_id, "textContent");
+				hide(text, "innerHTML");
+			}
 		}
 	};
 	var getBBS=function(){
 		return document.getElementsByTagName("dl");
 	};
-    var getSelectorString=function(){
-        if(url.indexOf('nicomoba')!=-1)//nicomoba
-            return 'dl > dt';
-        else
-            return 'div[id=bbs] > dl > dt';
-    };
+	var getSelectorString=function(){
+		if(url.indexOf('nicomoba')!=-1)//nicomoba
+			return 'dl > dt';
+		else
+			return 'div[id=bbs] > dl > dt';
+	};
 	doNG=function doNG(NGList){
 		console.log("doNG PC or nicomoba");
 		var ngList=NGList.value.split('\n').filter(function(el) {return el.length !== 0;});
@@ -108,9 +108,9 @@ else{//mobile
 		var posts=bbs.getElementsByTagName("li");
 		for(var i=0; i<posts.length; i++){
 			var post=posts[i];
-            var name=post.getElementsByClassName("at-List_Name")[0].childNodes[1];
-            var date_id=post.getElementsByClassName("at-List_Date")[0];
-            var text=post.getElementsByClassName("at-List_Text")[0];
+			var name=post.getElementsByClassName("at-List_Name")[0].childNodes[1];
+			var date_id=post.getElementsByClassName("at-List_Date")[0];
+			var text=post.getElementsByClassName("at-List_Text")[0];
 			for(var j=0; j<ngList.length; j++){
 				if(date_id.textContent.indexOf(ngList[j])!=-1){
 					name.textContent="NGしました";
@@ -183,7 +183,7 @@ var main=function(){
 	if(url.indexOf("dic.nicovideo.jp/t")!==-1){//mobile
 		div = document.getElementsByClassName("st-Footer_Inner")[0];
 		div.parentNode.insertBefore(NGdiv, div.nextSibling);
-        NGdiv.NGList.rows = "5";
+		NGdiv.NGList.rows = "5";
 		NGdiv.NGList.cols = "20";
 		document.getElementsByClassName("st-Footer")[0].style.height="295.9375px";
 	}
@@ -195,7 +195,7 @@ var main=function(){
 	else{//nicomoba
 		div = document.querySelectorAll("[id='bottom']")[1];
 		div.parentNode.insertBefore(NGdiv, div);
-        addNGButton(NGdiv.NGList);
+		addNGButton(NGdiv.NGList);
 	}
 
 	doNG(NGdiv.NGList);
