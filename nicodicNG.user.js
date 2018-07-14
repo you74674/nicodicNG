@@ -9,13 +9,29 @@
 // @include		https://dic.nicomoba.jp/k/b/a/*
 // @include		http://dic.nicovideo.jp/t/b/a/*
 // @include		https://dic.nicovideo.jp/t/b/a/*
-// @version		1.8.6
+// @version		1.9.0
 // @grant		none
 // @run-at document-start
 // @description	ニコニコ大百科掲示板NG機能。IDを入力して設定を押せばNGできます。
 // ==/UserScript==
 
 var url = window.location.href;
+
+function hide(e, c, r){
+    var key = c+"_cache";
+    if(r!==undefined){
+        if(e[c]!=r){
+            e[key]=e[c];
+            e[c]=r;
+        }
+    }
+    else{
+        if(e[key]!==undefined){
+            e[c]=e[key];
+            e[key]=undefined;
+        }
+    }
+}
 
 var doNG;
 var addNGButton;
@@ -24,15 +40,20 @@ if(url.indexOf("dic.nicovideo.jp/t/b/a")===-1){//PC or nicomoba
 		var resheads=dl.getElementsByTagName("dt");
 		var resbodies=dl.getElementsByTagName("dd");
 		for(var i=0; i<resheads.length; i++){
-			var reshead=resheads[i];
-			var resbody=resbodies[i];
-			for(var j=0; j<ngList.length; j++){
-				if(reshead.textContent.indexOf(ngList[j])!=-1){
-					reshead.childNodes[3].textContent="NGしました";
-					reshead.childNodes[4].textContent=" ：NGしました ID: "+" ";
-					resbody.textContent="NGしました";
-				}
-			}
+			var name=resheads[i].childNodes[3];
+			var date_id=resheads[i].childNodes[4];
+            var id=resheads[i].childNodes[5];
+			var text=resbodies[i];
+            if(ngList.indexOf(id.textContent)!=-1){
+                hide(name, "textContent", "NGしました");
+                hide(date_id, "textContent", " ：NGしました ID:  ");
+                hide(text, "innerHTML", "NGしました");
+            }
+            else{
+                hide(name, "textContent");
+                hide(date_id, "textContent");
+                hide(text, "innerHTML");
+            }
 		}
 	};
 	var getBBS=function(){
@@ -43,7 +64,7 @@ if(url.indexOf("dic.nicovideo.jp/t/b/a")===-1){//PC or nicomoba
             return 'dl > dt';
         else
             return 'div[id=bbs] > dl > dt';
-    }
+    };
 	doNG=function doNG(NGList){
 		console.log("doNG PC or nicomoba");
 		var ngList=NGList.value.split('\n').filter(function(el) {return el.length !== 0;});
@@ -62,22 +83,24 @@ if(url.indexOf("dic.nicovideo.jp/t/b/a")===-1){//PC or nicomoba
 				id.style.color="red";
 				id.style.textDecoration = "underline";
 			});
-		id.addEventListener( 'mouseout', function() {
-			id.style.color="black";
-			id.style.textDecoration = "none";
+			id.addEventListener( 'mouseout', function() {
+				id.style.color="black";
+				id.style.textDecoration = "none";
 			});
 		});
 		var ids=document.querySelectorAll(getSelectorString()+ ' > id');
 		ids.forEach(function(e){
 			e.onclick=function(){
 				var ID=e.textContent;
-			if(NGList.value.indexOf(ID)==-1)
-			{
-				NGList.addNGID(ID);
+				if(NGList.value.indexOf(ID)==-1){
+					NGList.addNGID(ID);
+				}
+				else{
+					NGList.removeNGID(ID);
+				}
 				doNG(NGList);
-			}
-		}
-    });
+			};
+		});
 	};
 }
 else{//mobile
@@ -123,6 +146,14 @@ function getNGdiv(){
 	}
 	NGList.addNGID=function(id){
 		NGList.value+="\n"+id;
+		while(NGList.value.indexOf("\n\n")!=-1)
+			NGList.value=NGList.value.replace("\n\n", "\n");
+		localStorage.setItem('nicodicNG', NGList.value);
+	};
+	NGList.removeNGID=function(id){
+		NGList.value=NGList.value.replace(id, "");
+		while(NGList.value.indexOf("\n\n")!=-1)
+			NGList.value=NGList.value.replace("\n\n", "\n");
 		localStorage.setItem('nicodicNG', NGList.value);
 	};
 
