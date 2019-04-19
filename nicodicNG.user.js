@@ -9,7 +9,7 @@
 // @include		https://dic.nicomoba.jp/k/b/a/*
 // @include		http://dic.nicovideo.jp/t/b/a/*
 // @include		https://dic.nicovideo.jp/t/b/a/*
-// @version		1.9.0
+// @version		1.9.1
 // @grant		none
 // @run-at document-start
 // @description	ニコニコ大百科掲示板NG機能。IDを入力して設定を押せばNGできます。
@@ -68,7 +68,7 @@ if(url.indexOf("dic.nicovideo.jp/t/b/a")===-1){//PC or nicomoba
 	doNG=function doNG(NGList){
 		console.log("doNG PC or nicomoba");
 		var ngList=NGList.value.split('\n').filter(function(el) {return el.length !== 0;});
-		var bbs = getBBS();
+		var bbs = document.querySelectorAll('div[id=bbs] > dl');
 		for(var dl=0; dl<bbs.length; dl++)
 			doNGImpl(bbs[dl], ngList);
 	};
