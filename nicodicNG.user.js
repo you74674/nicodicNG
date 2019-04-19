@@ -9,7 +9,7 @@
 // @include		https://dic.nicomoba.jp/k/b/a/*
 // @include		http://dic.nicovideo.jp/t/b/a/*
 // @include		https://dic.nicovideo.jp/t/b/a/*
-// @version		1.9.1
+// @version		1.9.2
 // @grant		none
 // @run-at document-start
 // @description	ニコニコ大百科掲示板NG機能。IDを入力して設定を押せばNGできます。
@@ -40,13 +40,14 @@ if(url.indexOf("dic.nicovideo.jp/t/b/a")===-1){//PC or nicomoba
 		var resheads=dl.getElementsByTagName("dt");
 		var resbodies=dl.getElementsByTagName("dd");
 		for(var i=0; i<resheads.length; i++){
-			var name=resheads[i].childNodes[3];
-			var date_id=resheads[i].childNodes[4];
-			var id=resheads[i].childNodes[5];
+			var name=resheads[i].childNodes[5];
+			var date_id=resheads[i].childNodes[7];
+			var id=date_id.children[0];
+            date_id.removeChild(id);
 			var text=resbodies[i];
 			if(ngList.indexOf(id.textContent)!=-1){
 				hide(name, "textContent", "NGしました");
-				hide(date_id, "textContent", " ：NGしました ID:  ");
+				hide(date_id, "textContent", "NGしました ID:  ");
 				hide(text, "innerHTML", "NGしました");
 			}
 			else{
@@ -54,21 +55,19 @@ if(url.indexOf("dic.nicovideo.jp/t/b/a")===-1){//PC or nicomoba
 				hide(date_id, "textContent");
 				hide(text, "innerHTML");
 			}
+            date_id.appendChild(id)
 		}
 	};
 	var getBBS=function(){
 		return document.getElementsByTagName("dl");
 	};
 	var getSelectorString=function(){
-		if(url.indexOf('nicomoba')!=-1)//nicomoba
-			return 'dl > dt';
-		else
-			return 'div[id=bbs] > dl > dt';
+		return 'dl > dt[class=st-bbs_reshead]';
 	};
 	doNG=function doNG(NGList){
 		console.log("doNG PC or nicomoba");
 		var ngList=NGList.value.split('\n').filter(function(el) {return el.length !== 0;});
-		var bbs = document.querySelectorAll('div[id=bbs] > dl');
+		var bbs = document.querySelectorAll('div[class=st-bbs-contents] > dl');
 		for(var dl=0; dl<bbs.length; dl++)
 			doNGImpl(bbs[dl], ngList);
 	};
@@ -79,16 +78,16 @@ if(url.indexOf("dic.nicovideo.jp/t/b/a")===-1){//PC or nicomoba
 		dts.forEach(function(e){
 			e.innerHTML=e.innerHTML.replace(regex, "ID: <id title='NGする' style='cursor: pointer;'>$1</id>");
 			var id=e.querySelectorAll('id')[0];
-			id.addEventListener( 'mouseover', function() {
+			id.onmouseover = function() {
 				id.style.color="red";
 				id.style.textDecoration = "underline";
-			});
-			id.addEventListener( 'mouseout', function() {
-				id.style.color="black";
+			};
+			id.onmouseleave = function() {
+				id.style.color="grey";
 				id.style.textDecoration = "none";
-			});
+			};
 		});
-		var ids=document.querySelectorAll(getSelectorString()+ ' > id');
+		var ids=document.querySelectorAll(getSelectorString()+ ' > div > id');
 		ids.forEach(function(e){
 			e.onclick=function(){
 				var ID=e.textContent;
@@ -99,6 +98,7 @@ if(url.indexOf("dic.nicovideo.jp/t/b/a")===-1){//PC or nicomoba
 					NGList.removeNGID(ID);
 				}
 				doNG(NGList);
+                e.onmouseleave();
 			};
 		});
 	};
