@@ -1,15 +1,8 @@
 ﻿// ==UserScript==
 // @name		ニコニコ大百科掲示板NG機能
 // @namespace	yakisoft
-// @include		http://dic.nicovideo.jp/a/*
-// @include		https://dic.nicovideo.jp/a/*
-// @include		http://dic.nicovideo.jp/b/a/*
-// @include		https://dic.nicovideo.jp/b/a/*
-// @include		http://dic.nicomoba.jp/k/b/a/*
-// @include		https://dic.nicomoba.jp/k/b/a/*
-// @include		http://dic.nicovideo.jp/t/b/a/*
-// @include		https://dic.nicovideo.jp/t/b/a/*
-// @version		1.9.2
+// @include		/^https?:\/\/dic\.nico(moba|video)\.jp\/.*$/
+// @version		1.9.3
 // @grant		none
 // @run-at document-start
 // @description	ニコニコ大百科掲示板NG機能。IDを入力して設定を押せばNGできます。
