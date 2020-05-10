@@ -129,7 +129,6 @@ function getNGdiv(){
 	var NGList = document.createElement("textarea");
 	var NGButton = document.createElement("button");
 	NGList.name = "NGList";
-	NGList.maxLength = "5000";
 	NGList.cols = "40";
 	NGList.rows = "10";
 	if(typeof(Storage) !== "undefined"){
