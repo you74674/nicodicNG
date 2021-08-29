@@ -2,7 +2,7 @@
 // @name		ニコニコ大百科掲示板NG機能
 // @namespace	yakisoft
 // @include		/^https?:\/\/dic\.nico(moba|video)\.jp\/[a-z]\/.*$/
-// @version		1.9.5
+// @version		1.9.6
 // @grant		none
 // @run-at document-start
 // @description	ニコニコ大百科掲示板NG機能。IDを入力して設定を押せばNGできます。
@@ -66,7 +66,7 @@ if(url.indexOf("dic.nicovideo.jp/t/b/a")===-1){//PC or nicomoba
 	};
 
 	addNGButton=function addNGButton(NGList){
-		var dts=document.querySelectorAll(getSelectorString());
+		var dts=document.querySelectorAll(getSelectorString()+ ' > div[class=st-bbs_resInfo]');
 		var regex=/ID: (.*)/;
 		dts.forEach(function(e){
 			e.innerHTML=e.innerHTML.replace(regex, "ID: <id title='NGする' style='cursor: pointer;'>$1</id>");
