@@ -2,7 +2,7 @@
 // @name		ニコニコ大百科掲示板NG機能
 // @namespace	yakisoft
 // @include		/^https?:\/\/dic\.nico(moba|video)\.jp\/[a-z]\/.*$/
-// @version		1.9.6
+// @version		1.9.7
 // @grant		none
 // @run-at document-start
 // @description	ニコニコ大百科掲示板NG機能。IDを入力して設定を押せばNGできます。
@@ -36,7 +36,7 @@ if(url.indexOf("dic.nicovideo.jp/t/b/a")===-1){//PC or nicomoba
 			var name=resheads[i].childNodes[5];
 			var date_id=resheads[i].childNodes[7];
 			var id=date_id.children[0];
-            date_id.removeChild(id);
+			date_id.removeChild(id);
 			var text=resbodies[i];
 			if(ngList.indexOf(id.textContent)!=-1){
 				hide(name, "textContent", "NGしました");
@@ -48,7 +48,7 @@ if(url.indexOf("dic.nicovideo.jp/t/b/a")===-1){//PC or nicomoba
 				hide(date_id, "textContent");
 				hide(text, "innerHTML");
 			}
-            date_id.appendChild(id)
+			date_id.appendChild(id)
 		}
 	};
 	var getBBS=function(){
@@ -91,7 +91,7 @@ if(url.indexOf("dic.nicovideo.jp/t/b/a")===-1){//PC or nicomoba
 					NGList.removeNGID(ID);
 				}
 				doNG(NGList);
-                e.onmouseleave();
+				e.onmouseleave();
 			};
 		});
 	};
@@ -193,7 +193,13 @@ var main=function(){
 	doNG(NGdiv.NGList);
 };
 if(url.indexOf("dic.nicovideo.jp/a")===-1)//notes page
-	document.getElementsByTagName("html")[0].style.visibility="hidden";
+{
+	try{
+		document.getElementsByTagName("html")[0].style.visibility="hidden";
+	}catch(e){
+		console.warn(e);
+	}
+}
 var greasemonkeyInterval = setInterval(greasemonkey, 100);
 function greasemonkey(){
 	if(document.readyState!=="loading"){
