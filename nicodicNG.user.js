@@ -2,7 +2,7 @@
 // @name		ニコニコ大百科掲示板NG機能
 // @namespace	yakisoft
 // @include		/^https?:\/\/dic\.nico(moba|video)\.jp\/[a-z]\/.*$/
-// @version		1.9.7
+// @version		1.9.7.1
 // @grant		none
 // @run-at document-start
 // @description	ニコニコ大百科掲示板NG機能。IDを入力して設定を押せばNGできます。
@@ -30,23 +30,27 @@ var doNG;
 var addNGButton;
 if(url.indexOf("dic.nicovideo.jp/t/b/a")===-1){//PC or nicomoba
 	var doNGImpl=function doNGImpl(dl, ngList){
-		var resheads=dl.getElementsByTagName("dt");
-		var resbodies=dl.getElementsByTagName("dd");
+		var resheads=dl.getElementsByClassName("st-bbs_reshead");
+		var resbodies=dl.getElementsByClassName("st-bbs_resbody");
+		var resreaction=dl.getElementsByClassName("res_reaction");
 		for(var i=0; i<resheads.length; i++){
 			var name=resheads[i].childNodes[5];
 			var date_id=resheads[i].childNodes[7];
 			var id=date_id.children[0];
 			date_id.removeChild(id);
 			var text=resbodies[i];
+			var reaction=resreaction[i];
 			if(ngList.indexOf(id.textContent)!=-1){
 				hide(name, "textContent", "NGしました");
 				hide(date_id, "textContent", "NGしました ID:  ");
 				hide(text, "innerHTML", "NGしました");
+				hide(reaction, "innerHTML", "");
 			}
 			else{
 				hide(name, "textContent");
 				hide(date_id, "textContent");
 				hide(text, "innerHTML");
+				hide(reaction, "innerHTML");
 			}
 			date_id.appendChild(id)
 		}
