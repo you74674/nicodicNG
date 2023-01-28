@@ -2,7 +2,7 @@
 // @name		ニコニコ大百科掲示板NG機能
 // @namespace	yakisoft
 // @include		/^https?:\/\/dic\.nico(moba|video)\.jp\/[a-z]\/.*$/
-// @version		1.9.7.1
+// @version		1.9.8
 // @grant		none
 // @run-at document-start
 // @description	ニコニコ大百科掲示板NG機能。IDを入力して設定を押せばNGできます。
@@ -102,19 +102,28 @@ if(url.indexOf("dic.nicovideo.jp/t/b/a")===-1){//PC or nicomoba
 }
 else{//mobile
 	var doNGImpl=function doNGImpl(bbs, ngList){
-		var posts=bbs.getElementsByTagName("li");
-		for(var i=0; i<posts.length; i++){
-			var post=posts[i];
+		var posts = document.querySelectorAll("ul[class=sw-Article_List] > li");
+		for(var i=0; i<posts.length; i+=2){
+			var post = posts[i];
+			var reaction = posts[i+1];
 			var name=post.getElementsByClassName("at-List_Name")[0].childNodes[1];
 			var date_id=post.getElementsByClassName("at-List_Date")[0];
+			var id=date_id.children[0];
+			date_id.removeChild(id);
 			var text=post.getElementsByClassName("at-List_Text")[0];
-			for(var j=0; j<ngList.length; j++){
-				if(date_id.textContent.indexOf(ngList[j])!=-1){
-					name.textContent="NGしました";
-					date_id.textContent="NGしました ID: "+ngList[j];
-					text.textContent="NGしました";
-				}
+			if(ngList.indexOf(id.textContent)!=-1){
+				hide(name, "textContent", "NGしました");
+				hide(date_id, "textContent", "NGしました ID: ");
+				hide(text, "innerHTML", "NGしました");
+				hide(reaction, "innerHTML", "");
 			}
+			else{
+				hide(name, "textContent");
+				hide(date_id, "textContent");
+				hide(text, "innerHTML");
+				hide(reaction, "innerHTML");
+			}
+			date_id.appendChild(id);
 		}
 	};
 	var getBBS=function(){
@@ -125,6 +134,36 @@ else{//mobile
 		var ngList=NGList.value.split('\n').filter(function(el) {return el.length !== 0;});
 		var bbs = getBBS();
 		doNGImpl(bbs, ngList);
+	};
+	addNGButton=function addNGButton(NGList){
+		var dts = document.getElementsByClassName("at-List_Date");
+		var regex=/ID: (.*)/;
+		dts.forEach(function(e){
+			e.innerHTML=e.innerHTML.replace(regex, "ID: <id title='NGする' style='cursor: pointer;'>$1</id>");
+			var id=e.querySelectorAll('id')[0];
+			id.onmouseover = function() {
+				id.style.color="red";
+				id.style.textDecoration = "underline";
+			};
+			id.onmouseleave = function() {
+				id.style.color="grey";
+				id.style.textDecoration = "none";
+			};
+		});
+		var ids=document.querySelectorAll('p[class=at-List_Date] > id');
+		ids.forEach(function(e){
+			e.onclick=function(){
+				var ID=e.textContent;
+				if(NGList.value.indexOf(ID)==-1){
+					NGList.addNGID(ID);
+				}
+				else{
+					NGList.removeNGID(ID);
+				}
+				doNG(NGList);
+				e.onmouseleave();
+			};
+		});
 	};
 }
 
@@ -182,6 +221,7 @@ var main=function(){
 		NGdiv.NGList.rows = "5";
 		NGdiv.NGList.cols = "20";
 		document.getElementsByClassName("st-Footer")[0].style.height="295.9375px";
+		addNGButton(NGdiv.NGList);
 	}
 	else if(url.indexOf("nicomoba")===-1){//PC
 		div = document.getElementById("main");
