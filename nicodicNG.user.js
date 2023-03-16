@@ -2,16 +2,18 @@
 // @name		ニコニコ大百科掲示板NG機能
 // @namespace	yakisoft
 // @include		/^https?:\/\/dic\.nico(moba|video)\.jp\/[a-z]\/.*$/
-// @version		1.9.9
+// @version		1.10.0
 // @grant		none
 // @run-at document-start
 // @description	ニコニコ大百科掲示板NG機能。IDを入力して設定を押せばNGできます。
 // ==/UserScript==
 
-var url = window.location.href;
+const url = window.location.href;
 
 function hide(e, c, r){
-	var key = c+"_cache";
+	if(e===undefined)
+		return;
+	const key = c+"_cache";
 	if(r!==undefined){
 		if(e[c]!=r){
 			e[key]=e[c];
@@ -26,151 +28,10 @@ function hide(e, c, r){
 	}
 }
 
-var doNG;
-var addNGButton;
-if(url.indexOf("dic.nicovideo.jp/t")===-1){//PC or nicomoba
-	var doNGImpl=function doNGImpl(dl, ngList){
-		var resheads=dl.getElementsByClassName("st-bbs_reshead");
-		var resbodies=dl.getElementsByClassName("st-bbs_resbody");
-		var resreaction=dl.getElementsByClassName("res_reaction");
-		for(var i=0; i<resheads.length; i++){
-			var name=resheads[i].childNodes[5];
-			var date_id=resheads[i].childNodes[7];
-			var id=date_id.children[0];
-			date_id.removeChild(id);
-			var text=resbodies[i];
-			var reaction=resreaction[i];
-			if(ngList.indexOf(id.textContent)!=-1){
-				hide(name, "textContent", "NGしました");
-				hide(date_id, "textContent", "NGしました ID:  ");
-				hide(text, "innerHTML", "NGしました");
-				hide(reaction, "innerHTML", "");
-			}
-			else{
-				hide(name, "textContent");
-				hide(date_id, "textContent");
-				hide(text, "innerHTML");
-				hide(reaction, "innerHTML");
-			}
-			date_id.appendChild(id)
-		}
-	};
-	var getBBS=function(){
-		return document.getElementsByTagName("dl");
-	};
-	var getSelectorString=function(){
-		return 'dl > dt[class=st-bbs_reshead]';
-	};
-	doNG=function doNG(NGList){
-		console.log("doNG PC or nicomoba");
-		var ngList=NGList.value.split('\n').filter(function(el) {return el.length !== 0;});
-		var bbs = document.querySelectorAll('div[class=st-bbs-contents] > dl');
-		for(var dl=0; dl<bbs.length; dl++)
-			doNGImpl(bbs[dl], ngList);
-	};
-
-	addNGButton=function addNGButton(NGList){
-		var dts=document.querySelectorAll(getSelectorString()+ ' > div[class=st-bbs_resInfo]');
-		var regex=/ID: (.*)/;
-		dts.forEach(function(e){
-			e.innerHTML=e.innerHTML.replace(regex, "ID: <id title='NGする' style='cursor: pointer;'>$1</id>");
-			var id=e.querySelectorAll('id')[0];
-			id.onmouseover = function() {
-				id.style.color="red";
-				id.style.textDecoration = "underline";
-			};
-			id.onmouseleave = function() {
-				id.style.color="grey";
-				id.style.textDecoration = "none";
-			};
-		});
-		var ids=document.querySelectorAll(getSelectorString()+ ' > div > id');
-		ids.forEach(function(e){
-			e.onclick=function(){
-				var ID=e.textContent;
-				if(NGList.value.indexOf(ID)==-1){
-					NGList.addNGID(ID);
-				}
-				else{
-					NGList.removeNGID(ID);
-				}
-				doNG(NGList);
-				e.onmouseleave();
-			};
-		});
-	};
-}
-else{//mobile
-	var doNGImpl=function doNGImpl(bbs, ngList){
-		var posts = document.querySelectorAll("ul[class=sw-Article_List] > li");
-		for(var i=0; i<posts.length; i+=2){
-			var post = posts[i];
-			var reaction = posts[i+1];
-			var name=post.getElementsByClassName("at-List_Name")[0].childNodes[1];
-			var date_id=post.getElementsByClassName("at-List_Date")[0];
-			var id=date_id.children[0];
-			date_id.removeChild(id);
-			var text=post.getElementsByClassName("at-List_Text")[0];
-			if(ngList.indexOf(id.textContent)!=-1){
-				hide(name, "textContent", "NGしました");
-				hide(date_id, "textContent", "NGしました ID: ");
-				hide(text, "innerHTML", "NGしました");
-				hide(reaction, "innerHTML", "");
-			}
-			else{
-				hide(name, "textContent");
-				hide(date_id, "textContent");
-				hide(text, "innerHTML");
-				hide(reaction, "innerHTML");
-			}
-			date_id.appendChild(id);
-		}
-	};
-	var getBBS=function(){
-		return document.getElementsByClassName("sw-Article_List")[0];
-	};
-	doNG=function doNG(NGList){
-		console.log("doNG mobile");
-		var ngList=NGList.value.split('\n').filter(function(el) {return el.length !== 0;});
-		var bbs = getBBS();
-		doNGImpl(bbs, ngList);
-	};
-	addNGButton=function addNGButton(NGList){
-		var dts = document.getElementsByClassName("at-List_Date");
-		var regex=/ID: (.*)/;
-		dts.forEach(function(e){
-			e.innerHTML=e.innerHTML.replace(regex, "ID: <id title='NGする' style='cursor: pointer;'>$1</id>");
-			var id=e.querySelectorAll('id')[0];
-			id.onmouseover = function() {
-				id.style.color="red";
-				id.style.textDecoration = "underline";
-			};
-			id.onmouseleave = function() {
-				id.style.color="grey";
-				id.style.textDecoration = "none";
-			};
-		});
-		var ids=document.querySelectorAll('p[class=at-List_Date] > id');
-		ids.forEach(function(e){
-			e.onclick=function(){
-				var ID=e.textContent;
-				if(NGList.value.indexOf(ID)==-1){
-					NGList.addNGID(ID);
-				}
-				else{
-					NGList.removeNGID(ID);
-				}
-				doNG(NGList);
-				e.onmouseleave();
-			};
-		});
-	};
-}
-
-function getNGdiv(){
-	var div = document.createElement("div");
-	var NGList = document.createElement("textarea");
-	var NGButton = document.createElement("button");
+function getNGdiv(engine){
+	const div = document.createElement("div");
+	const NGList = document.createElement("textarea");
+	const NGButton = document.createElement("button");
 	NGList.name = "NGList";
 	NGList.cols = "40";
 	NGList.rows = "10";
@@ -197,7 +58,7 @@ function getNGdiv(){
 	NGButton.style = "width:75px; height:25px";
 	NGButton.onclick=function(){
 		localStorage.setItem('nicodicNG', NGList.value);
-		doNG(NGList);
+		engine.doNG(NGList);
 	};
 	div.appendChild(NGList);
 	div.appendChild(NGButton);
@@ -207,34 +68,193 @@ function getNGdiv(){
 	return div;
 }
 
-var main=function(){
-	//autopagerize support
-	document.body.addEventListener('AutoPagerize_DOMNodeInserted',function(evt){
-		doNG(NGdiv.NGList);
-	}, false);
+//PC or nicomoba
+class NGPC{
+	constructor(){
+		const NGdiv = getNGdiv(this);
+		this.NGdiv = NGdiv;
+		if(url.indexOf("nicomoba")===-1){//PC
+			const div = document.getElementById("main");
+			div.appendChild(NGdiv);
+			this.addNGButton(NGdiv.NGList);
+		}
+		else{//nicomoba
+			const div = document.querySelectorAll("[id='bottom']")[1];
+			div.parentNode.insertBefore(NGdiv, div);
+			this.addNGButton(NGdiv.NGList);
+		}
+	
+	}
+	doNGImpl(dl, ngList){
+		const resList = [];
+		//st-bbs_reshead
+		//st-bbs_resbody
+		//res_reaction
+		for(let child of dl.children){
+			if(child.tagName=="DT")
+				resList.push({});
+			resList[resList.length-1][child.className.split("_")[1]] = child;
+		}
+		for(const res of resList){
+			const name = res.reshead.childNodes[5];
+			const date_id = res.reshead.childNodes[7];
+			const id = date_id.children[date_id.children.length-1];
+			date_id.removeChild(id);
+			const text = res.resbody;
+			const reaction = res.reaction;
+			if(ngList.indexOf(id.textContent)!=-1){
+				hide(name, "textContent", "NGしました");
+				hide(date_id, "textContent", "NGしました ID:  ");
+				hide(text, "innerHTML", "NGしました");
+				hide(reaction, "innerHTML", "");
+			}
+			else{
+				hide(name, "textContent");
+				hide(date_id, "textContent");
+				hide(text, "innerHTML");
+				hide(reaction, "innerHTML");
+			}
+			date_id.appendChild(id)
+		}
+	};
+	getBBS(){
+		return document.getElementsByTagName("dl");
+	};
+	getSelectorString(){
+		return 'dl > dt[class=st-bbs_reshead]';
+	};
+	doNG(){
+		console.log("doNG PC or nicomoba");
+		const ngList=this.NGdiv.NGList.value.split('\n').filter(function(el) {return el.length !== 0;});
+		const bbs = document.querySelectorAll('div[class=st-bbs-contents] > dl');
+		for(var dl=0; dl<bbs.length; dl++)
+			this.doNGImpl(bbs[dl], ngList);
+	};
 
-	var NGdiv = getNGdiv();
-	var div;
-	if(url.indexOf("dic.nicovideo.jp/t")!==-1){//mobile
-		div = document.getElementsByClassName("st-Footer_Inner")[0];
+	addNGButton(NGList){
+		const dts=document.querySelectorAll(this.getSelectorString()+ ' > div[class=st-bbs_resInfo]');
+		const regex=/ID: (.*)/;
+		dts.forEach(function(e){
+			e.innerHTML=e.innerHTML.replace(regex, "ID: <id title='NGする' style='cursor: pointer;'>$1</id>");
+			const id=e.querySelectorAll('id')[0];
+			id.onmouseover = function() {
+				id.style.color="red";
+				id.style.textDecoration = "underline";
+			};
+			id.onmouseleave = function() {
+				id.style.color="grey";
+				id.style.textDecoration = "none";
+			};
+		});
+		const ids=document.querySelectorAll(this.getSelectorString()+ ' > div > id');
+		ids.forEach((e)=>{
+			e.onclick=()=>{
+				const ID=e.textContent;
+				if(NGList.value.indexOf(ID)==-1){
+					NGList.addNGID(ID);
+				}
+				else{
+					NGList.removeNGID(ID);
+				}
+				this.doNG(NGList);
+				e.onmouseleave();
+			};
+		});
+	};
+}
+//mobile
+class NGMobile{
+	constructor(){
+		const NGdiv = getNGdiv(this);
+		this.NGdiv = NGdiv;
+		const div = document.getElementsByClassName("st-Footer_Inner")[0];
 		div.parentNode.insertBefore(NGdiv, div.nextSibling);
 		NGdiv.NGList.rows = "5";
 		NGdiv.NGList.cols = "20";
 		document.getElementsByClassName("st-Footer")[0].style.height="295.9375px";
-		addNGButton(NGdiv.NGList);
+		this.addNGButton(NGdiv.NGList);
 	}
-	else if(url.indexOf("nicomoba")===-1){//PC
-		div = document.getElementById("main");
-		div.appendChild(NGdiv);
-		addNGButton(NGdiv.NGList);
-	}
-	else{//nicomoba
-		div = document.querySelectorAll("[id='bottom']")[1];
-		div.parentNode.insertBefore(NGdiv, div);
-		addNGButton(NGdiv.NGList);
-	}
+	doNGImpl(bbs, ngList){
+		const resList = [];
+		for(let child of bbs.children){
+			if(child.tagName=="LI" && child.className!="res_reaction")
+				resList.push({
+					li: child
+				});
+			else if(child.tagName=="LI")
+				resList[resList.length-1]["reaction"] = child;
+		}
+		for(const res of resList){
+			const li = res.li;
+			const reaction = res.reaction;
+			const name = li.getElementsByClassName("at-List_Name")[0].childNodes[1];
+			const date_id = li.getElementsByClassName("at-List_Date")[0];
+			const id = date_id.children[0];
+			date_id.removeChild(id);
+			const text = li.getElementsByClassName("at-List_Text")[0];
+			if(ngList.indexOf(id.textContent)!=-1){
+				hide(name, "textContent", "NGしました");
+				hide(date_id, "textContent", "NGしました ID: ");
+				hide(text, "innerHTML", "NGしました");
+				hide(reaction, "innerHTML", "");
+			}
+			else{
+				hide(name, "textContent");
+				hide(date_id, "textContent");
+				hide(text, "innerHTML");
+				hide(reaction, "innerHTML");
+			}
+			date_id.appendChild(id);
+		}
+	};
+	getBBS(){
+		return document.getElementsByClassName("sw-Article_List")[0];
+	};
+	doNG(){
+		console.log("doNG mobile");
+		const ngList=this.NGdiv.NGList.value.split('\n').filter(function(el) {return el.length !== 0;});
+		const bbs = this.getBBS();
+		this.doNGImpl(bbs, ngList);
+	};
+	addNGButton(NGList){
+		const dts = document.getElementsByClassName("at-List_Date");
+		const regex=/ID: (.*)/;
+		dts.forEach(function(e){
+			e.innerHTML=e.innerHTML.replace(regex, "ID: <id title='NGする' style='cursor: pointer;'>$1</id>");
+			const id=e.querySelectorAll('id')[0];
+			id.onmouseover = function() {
+				id.style.color="red";
+				id.style.textDecoration = "underline";
+			};
+			id.onmouseleave = function() {
+				id.style.color="grey";
+				id.style.textDecoration = "none";
+			};
+		});
+		const ids=document.querySelectorAll('p[class=at-List_Date] > id');
+		ids.forEach((e)=>{
+			e.onclick=()=>{
+				const ID=e.textContent;
+				if(NGList.value.indexOf(ID)==-1){
+					NGList.addNGID(ID);
+				}
+				else{
+					NGList.removeNGID(ID);
+				}
+				this.doNG(NGList);
+				e.onmouseleave();
+			};
+		});
+	};
+}
 
-	doNG(NGdiv.NGList);
+function main(){
+	const engine = url.indexOf("dic.nicovideo.jp/t")!==-1 ? new NGMobile() : new NGPC();
+	//autopagerize support
+	document.body.addEventListener('AutoPagerize_DOMNodeInserted',function(evt){
+		engine.doNG();
+	}, false);
+	engine.doNG();
 };
 if(url.indexOf("dic.nicovideo.jp/a")===-1)//notes page
 {
@@ -244,7 +264,7 @@ if(url.indexOf("dic.nicovideo.jp/a")===-1)//notes page
 		console.warn(e);
 	}
 }
-var greasemonkeyInterval = setInterval(greasemonkey, 100);
+const greasemonkeyInterval = setInterval(greasemonkey, 100);
 function greasemonkey(){
 	if(document.readyState!=="loading"){
 		clearInterval(greasemonkeyInterval);
