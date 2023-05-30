@@ -2,7 +2,7 @@
 // @name		ニコニコ大百科掲示板NG機能
 // @namespace	yakisoft
 // @include		/^https?:\/\/dic\.nico(moba|video)\.jp\/[a-z]\/.*$/
-// @version		1.10.0
+// @version		1.11.0
 // @grant		none
 // @run-at document-start
 // @description	ニコニコ大百科掲示板NG機能。IDを入力して設定を押せばNGできます。
@@ -97,24 +97,23 @@ class NGPC{
 		}
 		for(const res of resList){
 			const name = res.reshead.childNodes[5];
-			const date_id = res.reshead.childNodes[7];
-			const id = date_id.children[date_id.children.length-1];
-			date_id.removeChild(id);
+			const resinfo = res.reshead.childNodes[9];
+			const date = resinfo.children[0];
+			const id = resinfo.children[resinfo.children.length-2];
 			const text = res.resbody;
 			const reaction = res.reaction;
 			if(ngList.indexOf(id.textContent)!=-1){
 				hide(name, "textContent", "NGしました");
-				hide(date_id, "textContent", "NGしました ID:  ");
+				hide(date, "textContent", "NGしました");
 				hide(text, "innerHTML", "NGしました");
 				hide(reaction, "innerHTML", "");
 			}
 			else{
 				hide(name, "textContent");
-				hide(date_id, "textContent");
+				hide(date, "textContent");
 				hide(text, "innerHTML");
 				hide(reaction, "innerHTML");
 			}
-			date_id.appendChild(id)
 		}
 	};
 	getBBS(){
@@ -187,24 +186,22 @@ class NGMobile{
 		for(const res of resList){
 			const li = res.li;
 			const reaction = res.reaction;
-			const name = li.getElementsByClassName("at-List_Name")[0].childNodes[1];
-			const date_id = li.getElementsByClassName("at-List_Date")[0];
-			const id = date_id.children[0];
-			date_id.removeChild(id);
+			const name = li.getElementsByClassName("bbs_name")[0];
+			const date = li.getElementsByClassName("bbs_resInfo_resTime")[0];
+			const id = li.querySelector("p[class=at-List_Date] > span > id");
 			const text = li.getElementsByClassName("at-List_Text")[0];
 			if(ngList.indexOf(id.textContent)!=-1){
 				hide(name, "textContent", "NGしました");
-				hide(date_id, "textContent", "NGしました ID: ");
+				hide(date, "textContent", "NGしました");
 				hide(text, "innerHTML", "NGしました");
 				hide(reaction, "innerHTML", "");
 			}
 			else{
 				hide(name, "textContent");
-				hide(date_id, "textContent");
+				hide(date, "textContent");
 				hide(text, "innerHTML");
 				hide(reaction, "innerHTML");
 			}
-			date_id.appendChild(id);
 		}
 	};
 	getBBS(){
@@ -231,7 +228,7 @@ class NGMobile{
 				id.style.textDecoration = "none";
 			};
 		});
-		const ids=document.querySelectorAll('p[class=at-List_Date] > id');
+		const ids=document.querySelectorAll('p[class=at-List_Date] > span > id');
 		ids.forEach((e)=>{
 			e.onclick=()=>{
 				const ID=e.textContent;
